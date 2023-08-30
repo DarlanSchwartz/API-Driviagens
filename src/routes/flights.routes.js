@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { getPassengersTravels, registerPassenger} from "../controllers/passengers.controller.js";
 import validateSchema from "../middlewares/validateSchema.js";
 import { FlightSchema } from "../schemas/flights.schemas.js";
+import { getFlights, registerFlight } from "../controllers/flights.controller.js";
 
 const flightsRouter = Router();
 
-flightsRouter.post('/flights',validateSchema(FlightSchema), registerPassenger); 
-flightsRouter.get('/flights', getPassengersTravels); 
+flightsRouter.post('/flights',validateSchema(FlightSchema), registerFlight); 
+flightsRouter.get('/flights', getFlights); 
 
 export default flightsRouter;
