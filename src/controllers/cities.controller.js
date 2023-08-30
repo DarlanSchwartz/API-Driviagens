@@ -8,6 +8,7 @@ export async function registerCity(req, res) {
         await createCity(name);
         return res.status(201).send('Created city sucessfully');
     } catch ({message}) {
+        console.log(message);
         throw { type: "create_city", message };
     }
 }

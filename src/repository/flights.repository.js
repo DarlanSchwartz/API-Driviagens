@@ -71,6 +71,7 @@ export async function findPassengerFlightsCount() {
         const flights = await db.query(query);
         return flights.rows;
     } catch ({message}) {
+        console.log(message);
         throw { type: "find_flights", message };
     }
 }
@@ -83,6 +84,7 @@ export async function validFlightLocations(fromId,toId) {
         const city = await db.query(query,[fromId,toId]);
         return city.rows[0].count > 1;
     } catch ({message}) {
+        console.log(message);
         throw { type: "create_city", message };
     }
 }

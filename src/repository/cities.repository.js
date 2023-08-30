@@ -9,6 +9,7 @@ export async function createCity(name) {
         const newCity = await db.query(query,[name]);
         return newCity.rows;
     } catch ({message}) {
+        console.log(message);
         throw { type: "create_city", message };
     }
 }
@@ -21,6 +22,7 @@ export async function cityExists(name) {
         const city = await db.query(query,[name]);
         return city.rows.length > 0;
     } catch ({message}) {
+        console.log(message);
         throw { type: "create_city", message };
     }
 }
