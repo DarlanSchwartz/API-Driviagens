@@ -2,6 +2,10 @@ import db from "../database/database.connection.js";
 
 export async function createTravel(passengerId,flightId) {
     try {
+        const query = `/* SQL */
+         INSERT INTO travels ("passengerID","flightId") VALUES ($1,$2);
+        `;
+        await db.query(query,[passengerId,flightId]);
         return null;
     } catch ({message}) {
         throw { type: "create_travel", message };

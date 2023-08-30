@@ -23,16 +23,19 @@ export async function createFlight(origin,destination,date) {
             JOIN cities AS origin ON flights.origin = origin.id
             JOIN cities AS destination ON flights.destination = destination.id
         `;
+
+        console.log(origin,destination,smaller_date,bigger_date);
             const queryParams = [];
     
-            if (origin || destination || (smaller_date && bigger_date)) {
+            if (origin  || destination  || (smaller_date  && bigger_date)) {
                 query += ' WHERE ';
             }
-            if (origin) {
+            console.log()
+            if (origin ) {
                 query += 'origin = $1';
                 queryParams.push(origin);
             }
-            if (destination) {
+            if (destination ) {
                 if (queryParams.length > 0) {
                     query += ' AND ';
                 }
@@ -48,6 +51,8 @@ export async function createFlight(origin,destination,date) {
             }
 
             query += ' ORDER BY date ASC';
+
+            console.log(query);
             
             const flights = await db.query(query, queryParams);
 
@@ -55,6 +60,7 @@ export async function createFlight(origin,destination,date) {
 
             return flights.rows;
         } catch ({ message }) {
+            console.log(message);
             throw { type: "find_flights", message };
         }
     }

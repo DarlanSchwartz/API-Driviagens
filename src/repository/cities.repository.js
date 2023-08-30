@@ -29,6 +29,7 @@ export async function getCityId(name) {
     if(!name || name =="") return null;
     const query = 'SELECT id FROM cities WHERE name = $1';
     const result = await db.query(query, [name]);
-    return result.rows[0]?.id;
+    const response = result.rows[0] ? result.rows[0].id : -420;
+    return response;
 }
 
