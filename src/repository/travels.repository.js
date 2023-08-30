@@ -26,8 +26,7 @@ export async function validTravelRequest(passengerId,flightId) {
         END;
         `;
         const isValid = await db.query(query,[passengerId,flightId]);
-        console.log(isValid);
-        return isValid.rows[0];
+        return isValid.rows[0].case == "false" ? false : true;
     } catch ({message}) {
         throw { type: "invalid_travel_request", message };
     }
