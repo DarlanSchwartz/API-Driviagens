@@ -1,8 +1,13 @@
+import { cityExists, createCity } from "../repository/cities.repository.js";
+
 export async function registerCity(req, res) {
+    const {name} = req.body;
     try {
-        return res.status(200).send('');
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send('Internal server error');
+        const hasAlreadyACityNamed = await cityExists(name);
+        if(hasAlreadyACityNamed) return res.sendStatus(409);
+        await createCity(name);
+        return res.status(201).send('Created city sucessfully');
+    } catch ({message}) {
+        throw { type: "create_city", message };
     }
 }
