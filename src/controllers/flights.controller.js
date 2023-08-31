@@ -3,7 +3,7 @@ import FlightService from "../services/flightServices.js";
 
 export async function registerFlight(req, res) {
     const { origin, destination, date } = req.body;
-    await FlightService.createFlight(origin,destination,date);
+    await FlightService.createFlight(origin, destination, date);
     return res.sendStatus(httpStatus.CREATED);
 }
 

@@ -1,7 +1,6 @@
 import db from "../database/database.connection.js";
 
 export async function createTravelDB(passengerId, flightId) {
-
     const query = `/* SQL */
          INSERT INTO travels ("passengerId","flightId") VALUES ($1,$2);
         `;
@@ -9,26 +8,33 @@ export async function createTravelDB(passengerId, flightId) {
     return null;
 }
 
-export async function findTravelsDB(name) {
+export async function findTravelsDB(name, offset, postsPerPage) {
     let query = `/* SQL */
             SELECT passengers."firstName", passengers."lastName", COUNT(travels.id) as travels
             FROM passengers
             LEFT JOIN travels
             ON passengers.id = travels."passengerId"
         `;
-    let parameters = []
+    let parameters = [];
     if (name) {
-        query += '  WHERE passengers."firstName" ILIKE $1';
+        query += '  WHERE passengers."firstName" ILIKE $' + (parameters.length + 1);
         parameters.push(`%${name}%`);
     }
 
-    query += ' GROUP BY passengers.id ORDER BY travels DESC;';
+    query += ' GROUP BY passengers.id ORDER BY travels DESC';
+    query += ' LIMIT $' + (parameters.length + 1);
+    parameters.push(postsPerPage);
+
+    if (offset) {
+        query += ' OFFSET $' + (parameters.length + 1);
+        parameters.push(offset);
+    }
+
     const travels = await db.query(query, parameters);
     return travels.rows;
 }
 
 export async function validTravelRequestDB(passengerId, flightId) {
-
     const query = `/* SQL */
          SELECT CASE
             WHEN EXISTS (

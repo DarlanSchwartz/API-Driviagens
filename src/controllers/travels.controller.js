@@ -1,5 +1,4 @@
 import httpStatus from "http-status";
-import { findTravelsDB } from "../repository/travels.repository.js";
 import TravelService from "../services/travelServices.js";
 
 export async function registerTravel(req, res) {
@@ -9,7 +8,7 @@ export async function registerTravel(req, res) {
 }
 
 export async function getTravels(req, res) {
-    const { name } = req.query;
-   const travels = await TravelService.getTravels(name);
+    const { name , page } = req.query;
+   const travels = await TravelService.getTravels(name, page);
     return res.status(httpStatus.OK).send(travels);
 }
