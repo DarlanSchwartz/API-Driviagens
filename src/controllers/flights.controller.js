@@ -2,21 +2,16 @@ import dayjs from "dayjs";
 import { getCityId } from "../repository/cities.repository.js";
 import { createFlight, findFlights, validFlightLocations } from "../repository/flights.repository.js";
 import { isValidDateFormat, dateBiggerThan, dateBiggerThanFormatBoth, formatDate } from "../services/dateServices.js";
+import httpStatus from "http-status";
 
 export async function registerFlight(req, res) {
     const { origin, destination, date } = req.body;
-    if (origin == destination) return res.sendStatus(409);
-    if (!dateBiggerThan(date, new Date())) return res.status(422).send('WHO DO YOU THINK YOU ARE?!');
-   
-    try {
-        const isValidFlight = await validFlightLocations(origin, destination);
-        if (!isValidFlight) return res.sendStatus(404); 
-        await createFlight(origin, destination, formatDate(date));
-        return res.sendStatus(201);
-    }  catch ({message}) {
-        console.log(message);
-        throw { type: "create_flight", message };
-    }
+    if (origin == destination) throw { type: "ConflictError", message: `You cannot fly from ${origin} to ${destination}` };
+    if (!dateBiggerThan(date, new Date())) throw { type: "Unprocessable", message: `You cannot register flights with a date on the past, you Moron!` };
+    const isValidFlight = await validFlightLocations(origin, destination);
+    if (!isValidFlight) throw { type: "NotFoundError", message: `You cannot register flights with a date on the past, you Moron!` };
+    await createFlight(origin, destination, formatDate(date));
+    return res.sendStatus(httpStatus.CREATED);
 }
 
 export async function getFlights(req, res) {
@@ -24,25 +19,16 @@ export async function getFlights(req, res) {
     const smallerDate = req.query['smaller-date'];
     const biggerDate = req.query['bigger-date'];
 
-    if (biggerDate && !smallerDate || smallerDate && !biggerDate) return res.sendStatus(422);
-    if (smallerDate && !isValidDateFormat(smallerDate)) return res.sendStatus(422);
-    if (biggerDate && !isValidDateFormat(biggerDate)) return res.sendStatus(422);
-    if (smallerDate && biggerDate && dateBiggerThanFormatBoth(smallerDate, biggerDate)) return res.sendStatus(400);
+    if (biggerDate && !smallerDate || smallerDate && !biggerDate) throw { type: "Unprocessable", message: `You cannot ask for flights with only smaller or bigger date, you have to pass both` };
+    if (smallerDate && !isValidDateFormat(smallerDate)) throw { type: "Unprocessable", message: `Invalid smaller date format, correct is DD-MM-YYYY` };
+    if (biggerDate && !isValidDateFormat(biggerDate)) throw { type: "Unprocessable", message: `Invalid bigger date format, correct is DD-MM-YYYY` };
+    if (smallerDate && biggerDate && dateBiggerThanFormatBoth(smallerDate, biggerDate)) throw { type: "BadRequest", message: `Smaller date has to be a date before (smaller) the bigger date!` };
 
-    try {
-        let originId = null;
-        let destinationId = null;
-        if (origin) {
-            originId = await getCityId(origin);
-        }
-        if (destination) {
-            destinationId = await getCityId(destination);
-        }
-        const flights = await findFlights(originId, destinationId, smallerDate ? formatDate(smallerDate) : null, biggerDate ? formatDate(biggerDate) : null);
-        if(origin && destination && flights.length == 0) return res.sendStatus(404);
-        return res.status(200).send(flights);
-    } catch ({message}) {
-        console.log(message);
-        throw { type: "get_flights", message };
-    }
+    let originId = null;
+    let destinationId = null;
+    if (origin) originId = await getCityId(origin);
+    if (destination) destinationId = await getCityId(destination);
+    const flights = await findFlights(originId, destinationId, smallerDate ? formatDate(smallerDate) : null, biggerDate ? formatDate(biggerDate) : null);
+    if (origin && destination && flights.length == 0) throw { type: "NotFoundError", message: `No flights found for ${origin} to ${destination}` };
+    return res.status(httpStatus.OK).send(flights);
 }

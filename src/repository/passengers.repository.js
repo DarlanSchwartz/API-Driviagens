@@ -1,15 +1,10 @@
 import db from "../database/database.connection.js";
 
-export async function createPassenger(firstName,lastName) {
-    try {
-        const query = `/* SQL */
+export async function createPassenger(firstName, lastName) {
+    const query = `/* SQL */
             INSERT INTO passengers ("firstName","lastName")
             VALUES ($1, $2);
         `;
-        const newUser = await db.query(query,[firstName,lastName]);
-        return newUser.rows;
-    } catch ({message}) {
-        console.log(message);
-        throw { type: "create_passenger", message };
-    }
+    const newUser = await db.query(query, [firstName, lastName]);
+    return newUser.rows;
 }
