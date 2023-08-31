@@ -1,6 +1,6 @@
 import db from "../database/database.connection.js";
 
-export async function createTravel(passengerId, flightId) {
+export async function createTravelDB(passengerId, flightId) {
 
     const query = `/* SQL */
          INSERT INTO travels ("passengerId","flightId") VALUES ($1,$2);
@@ -9,7 +9,7 @@ export async function createTravel(passengerId, flightId) {
     return null;
 }
 
-export async function findTravels(name) {
+export async function findTravelsDB(name) {
     let query = `/* SQL */
             SELECT passengers."firstName", passengers."lastName", COUNT(travels.id) as travels
             FROM passengers
@@ -27,7 +27,7 @@ export async function findTravels(name) {
     return travels.rows;
 }
 
-export async function validTravelRequest(passengerId, flightId) {
+export async function validTravelRequestDB(passengerId, flightId) {
 
     const query = `/* SQL */
          SELECT CASE

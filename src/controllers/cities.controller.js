@@ -1,10 +1,7 @@
 import httpStatus from "http-status";
-import { cityExists, createCity } from "../repository/cities.repository.js";
+import CityService from "../services/citiesServices.js";
 
 export async function registerCity(req, res) {
-    const { name } = req.body;
-    const hasAlreadyACityNamed = await cityExists(name);
-    if (hasAlreadyACityNamed) throw { type: "ConflictError", message: `There is alread a city named ${name}.` };
-    await createCity(name);
+    await CityService.createCity(req.body.name);
     return res.status(httpStatus.CREATED).send('Created city sucessfully');
 }

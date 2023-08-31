@@ -1,8 +1,7 @@
 import httpStatus from "http-status";
-import { createPassenger } from "../repository/passengers.repository.js";
+import PassengerService from "../services/passengerService.js";
 
 export async function registerPassenger(req, res) {
-    const { firstName, lastName } = req.body;
-    await createPassenger(firstName, lastName);
+    await PassengerService.createPassenger(req.body.firstName, req.body.lastName);
     return res.sendStatus(httpStatus.CREATED);
 }
