@@ -3,7 +3,6 @@ import { createTravelDB, findTravelsDB, validTravelRequestDB } from "../reposito
 async function getTravels(name, page) {
     const postsPerPage = 10;
     if (page) {
-        console.log(Number(page));
         if (page <= 0 ||  isNaN(Number(page))){
             throw { type: "BadRequest", message: 'Invalid page value' }
         }

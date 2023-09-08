@@ -1,4 +1,5 @@
 import db from "../database/database.connection.js";
+import { formatDateToBR } from "../services/dateServices.js";
 
 export async function createFlightDB(origin, destination, date) {
     const query = `INSERT INTO flights (origin,destination,date) VALUES($1,$2,$3);`;
@@ -39,12 +40,12 @@ export async function findFlightsDB(origin, destination, smaller_date, bigger_da
     }
 
     query += ' ORDER BY date ASC';
-
+//"date": "2023-10-24T03:00:00.000Z"
     const flights = await db.query(query, queryParams);
-
+    const fixedFlights = flights.rows.map((flight) => { return {...flight,date:formatDateToBR(flight.date.toString())}})
     if (flights.rows.length === 0) return [];
 
-    return flights.rows;
+    return fixedFlights;
 }
 
 

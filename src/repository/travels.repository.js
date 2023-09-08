@@ -17,7 +17,7 @@ export async function findTravelsDB(name, offset, postsPerPage) {
         `;
     let parameters = [];
     if (name) {
-        query += '  WHERE passengers."firstName" ILIKE $' + (parameters.length + 1);
+        query += '  WHERE passengers."firstName" ILIKE $' + (parameters.length + 1) + `OR passengers."lastName" ILIKE $` + (parameters.length + 1);
         parameters.push(`%${name}%`);
     }
 
@@ -31,7 +31,8 @@ export async function findTravelsDB(name, offset, postsPerPage) {
     }
 
     const travels = await db.query(query, parameters);
-    return travels.rows;
+    const fixedTravels = travels.rows.map(travel => {return {passenger: travel.firstName + " " + travel.lastName, travels:travel.travels}});
+    return fixedTravels;
 }
 
 export async function validTravelRequestDB(passengerId, flightId) {
