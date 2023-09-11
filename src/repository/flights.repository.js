@@ -39,7 +39,7 @@ export async function findFlightsDB(origin, destination, smaller_date, bigger_da
         queryParams.push(smaller_date, bigger_date);
     }
 
-    query += ' ORDER BY date ASC';
+    query += ' ORDER BY date DESC';
 //"date": "2023-10-24T03:00:00.000Z"
     const flights = await db.query(query, queryParams);
     const fixedFlights = flights.rows.map((flight) => { return {...flight,date:formatDateToBR(flight.date.toString())}})

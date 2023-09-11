@@ -8,7 +8,7 @@ export async function createTravelDB(passengerId, flightId) {
     return null;
 }
 
-export async function findTravelsDB(name, offset, postsPerPage) {
+export async function findTravelsDB(name, offset, postsPerPage,limit) {
     let query = `/* SQL */
             SELECT passengers."firstName", passengers."lastName", COUNT(travels.id) as travels
             FROM passengers
@@ -22,8 +22,12 @@ export async function findTravelsDB(name, offset, postsPerPage) {
     }
 
     query += ' GROUP BY passengers.id ORDER BY travels DESC';
-    query += ' LIMIT $' + (parameters.length + 1);
-    parameters.push(postsPerPage);
+    if(limit >= 10 )
+    {
+        query += ' LIMIT $' + (parameters.length + 1);
+        parameters.push(postsPerPage);
+    }
+    
 
     if (offset) {
         query += ' OFFSET $' + (parameters.length + 1);

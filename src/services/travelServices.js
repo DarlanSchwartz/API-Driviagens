@@ -9,8 +9,8 @@ async function getTravels(name, page) {
     }
     const currentPage = page ? Number(page) : 1;
     const offset = (currentPage - 1) * postsPerPage;
-    const travels = await findTravelsDB(name, offset, postsPerPage);
-    //if (travels.length > 10) throw { type: "Internal", message: `Too many results` };
+    const travels = await findTravelsDB(name, offset, postsPerPage,page ? 10 : 0);
+    if (travels.length > 10) throw { type: "Internal", message: `Too many results` };
     return travels;
 }
 
